@@ -1,5 +1,6 @@
 ﻿using EnglishDictionary.HelperClasses;
 using Learning.Libs.DataStructures;
+using Learning.Libs.DataStructures.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,11 +10,14 @@ namespace EnglishDictionary.Models
 {
     public class Model
     {
-        public static Trie<string> TrieDictionary;
+        public static IStringDictionary<string> Dictionary;
         
         public static void Populate()
         {
-            TrieDictionary = TrieDictionaryPopulator.Populate();
+            //Dictionary = new Trie<string>();
+            //Dictionary = new ListDictionary();
+            Dictionary = new StringHashTable<string>();
+            DictionaryPopulator.Populate(Dictionary);
         }
     }
 }

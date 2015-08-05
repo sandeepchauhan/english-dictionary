@@ -1,16 +1,24 @@
 ﻿<div>
     <br />
+    <br />
+    <div id="lastlookup">Lookup something!</div>
+    <br />
+    <br />
     <div>
         <input id="word" type="text" onkeyup="func(event)" />
-        <label id="meaning"></label>
     </div>
     <br />
     <div id="suggestionsDiv">
         <ul id="suggestionsList">
         </ul>
     </div>
+    <div id="suggestionsCallTimeTaken"></div>
 </div>
-<script>
+<script type="text/javascript">
+    var host = window.location.host;
+    var baseURLOfHomeController = "http://" + host + "/Home";
+    var startTime;
+    var timeTaken;
     function func(event)
     {
         var input = document.getElementById("word").value;
@@ -18,33 +26,28 @@
         var xmlhttp = new XMLHttpRequest();
         if (key == 13)
         {
-            xmlhttp.onreadystatechange = function () {
-                if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-                    document.getElementById("meaning").innerHTML = xmlhttp.responseText;
-                }
-            }
-
-            var url = "http://localhost:54100/Home/Meaning?word=" + input;
-            xmlhttp.open("GET", url, true);
-            xmlhttp.send();
+            showMeaning(input);
         }
-        else if (input.length > 3)
+        else if (input.length > 2)
         {
             xmlhttp.onreadystatechange = function () {
                 if (xmlhttp.readyState == 4) {
                     if (xmlhttp.status == 200) {
+                        timeTaken = (new Date()).getTime() - startTime;
                         var jsList = JSON.parse(xmlhttp.responseText);
                         var html = "";
                         for (var i = 0; i < jsList.length; i++) {
-                            html += "<li><a onclick=\"func2('" + jsList[i] +"')\">" + jsList[i] + "</a></li>";
+                            html += "<li><a onclick=\"showMeaning('" + jsList[i] + "')\">" + jsList[i] + "</a></li>";
                         }
                         document.getElementById("suggestionsList").innerHTML = html;
                         document.getElementById("suggestionsList").style.visibility = "visible";
+                        document.getElementById("suggestionsCallTimeTaken").innerHTML = "Time taken by last suggestions call: " + timeTaken;
                     }
                 }
             }
 
-            xmlhttp.open("GET", "http://localhost:54100/Home/Suggestions?word=" + input, true);
+            xmlhttp.open("GET", baseURLOfHomeController + "/Suggestions?word=" + input + "&timestamp=" + (new Date()).getTime(), true);
+            startTime = (new Date()).getTime();
             xmlhttp.send();
         }
         else
@@ -52,20 +55,30 @@
             document.getElementById("suggestionsList").style.visibility = "hidden";
         }
     }
-    function func2(word)
+
+    function showMeaning(word)
     {
         var xmlhttp = new XMLHttpRequest();
         xmlhttp.onreadystatechange = function () {
             if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
                 document.getElementById("suggestionsList").style.visibility = "hidden";
-                document.getElementById("meaning").innerHTML = xmlhttp.responseText;
+                var html = singleWordToCamelCase(word) + ": " + xmlhttp.responseText;
+                document.getElementById("lastlookup").innerHTML = html;
             }
         }
 
-        var url = "http://localhost:54100/Home/Meaning?word=" + word;
+        var url = baseURLOfHomeController + "/Meaning?word=" + word + "&timestamp=" + (new Date()).getTime();
         xmlhttp.open("GET", url, true);
         xmlhttp.send();
     }
+
+    function singleWordToCamelCase(word)
+    {
+        var length = word.length;
+        var firstChar = word.charAt(0);
+        return firstChar.toUpperCase() + word.substr(1, length - 1);
+    }
+
 </script>
 <!--div class="jumbotron">
     <h1>ASP.NET</h1>

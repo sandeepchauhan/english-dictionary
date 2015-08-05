@@ -154,7 +154,8 @@
     </Compile>
     <Compile Include="HelperClasses\Constants.cs" />
     <Compile Include="HelperClasses\DictionarySanitizer.cs" />
-    <Compile Include="HelperClasses\TrieDictionaryPopulator.cs" />
+    <Compile Include="HelperClasses\DictionaryPopulator.cs" />
+    <Compile Include="Models\ListDictionary.cs" />
     <Compile Include="Models\Model.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

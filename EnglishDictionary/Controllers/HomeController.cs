@@ -11,19 +11,19 @@ namespace EnglishDictionary.Controllers
     {
         public ActionResult Index()
         {
-            ViewBag.Title = "Home Page";
+            ViewBag.Title = Model.Dictionary.GetStats();
             return View();
         }
 
         public ActionResult Meaning(string word)
         {
-            string meaning = Model.TrieDictionary.GetData(word);
+            string meaning = Model.Dictionary.GetData(word);
             return Content(meaning);
         }
 
         public ActionResult Suggestions(string word)
         {
-            List<string> suggestions = Model.TrieDictionary.GetSuggestions(word);
+            IEnumerable<string> suggestions = Model.Dictionary.GetSuggestions(word);
             JsonResult ret = Json(suggestions, JsonRequestBehavior.AllowGet);
             return ret;
         }
